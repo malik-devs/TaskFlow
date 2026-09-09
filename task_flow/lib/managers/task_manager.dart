@@ -1,14 +1,12 @@
 import 'package:task_flow/models/task.dart';
 
-
 class TaskManager {
   final List<Task> _tasks = [];
+  int get taskCount => _tasks.length;
 
   void addTask(String taskTitle) {
     _tasks.add(Task(taskTitle));
   }
-
-  int get taskCount => _tasks.length;
 
   void showTasks() {
     int c = 0;
@@ -20,10 +18,16 @@ class TaskManager {
   }
 
   void completeTask(int index) {
-    _tasks[index].complete();  
+    if(checkIndex(index))
+      _tasks[index].complete();
   }
 
   void deleteTask(int index) {
-    _tasks.removeAt(index);
+    if(checkIndex(index))
+      _tasks.removeAt(index);
+  }
+
+  bool checkIndex(int index) {
+    return index >= 0 && index < _tasks.length;
   }
 }
