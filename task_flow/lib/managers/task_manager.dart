@@ -1,4 +1,5 @@
 import 'package:task_flow/models/task.dart';
+import 'package:task_flow/enums/status.dart';
 
 class TaskManager {
   final List<Task> _tasks = [];
@@ -33,9 +34,21 @@ class TaskManager {
   List<Task> searchTasks(String keyword) {
     keyword = keyword.toLowerCase();
     return _tasks
-        .where(
-          (task) => task.title.toLowerCase().contains(keyword),
-        )
+        .where((task) => task.title.toLowerCase().contains(keyword))
         .toList();
   }
+
+  List<Task> filterTasks(Status status) {
+    return _tasks.where((task) => task.status == status).toList();
+  }
+
+  void sortAZ() {
+    _tasks.sort((a, b) => a.title.compareTo(b.title));
+  }
+
+  void sortZA() {
+    _tasks.sort((a, b) => b.title.compareTo(a.title));
+  }
+
+
 }
