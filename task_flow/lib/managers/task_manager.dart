@@ -3,6 +3,7 @@ import 'package:task_flow/models/task.dart';
 class TaskManager {
   final List<Task> _tasks = [];
   int get taskCount => _tasks.length;
+  List<Task> get taskList => List.unmodifiable(_tasks);
 
   void addTask(String taskTitle) {
     _tasks.add(Task(taskTitle));
@@ -18,16 +19,23 @@ class TaskManager {
   }
 
   void completeTask(int index) {
-    if(checkIndex(index))
-      _tasks[index].complete();
+    if (checkIndex(index)) _tasks[index].complete();
   }
 
   void deleteTask(int index) {
-    if(checkIndex(index))
-      _tasks.removeAt(index);
+    if (checkIndex(index)) _tasks.removeAt(index);
   }
 
   bool checkIndex(int index) {
     return index >= 0 && index < _tasks.length;
+  }
+
+  List<Task> searchTasks(String keyword) {
+    keyword = keyword.toLowerCase();
+    return _tasks
+        .where(
+          (task) => task.title.toLowerCase().contains(keyword),
+        )
+        .toList();
   }
 }

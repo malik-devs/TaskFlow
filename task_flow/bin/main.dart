@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:task_flow/managers/task_manager.dart';
+import 'package:task_flow/models/task.dart';
 
 void main() {
   bool flag = true;
@@ -10,7 +11,8 @@ void main() {
     print("2. Show Tasks");
     print("3. Complete Task");
     print("4. Delete Task");
-    print("5. Exit");
+    print("5. Search Tasks");
+    print("6. Exit");
     stdout.write("Choose an option: ");
     int choice = int.parse(stdin.readLineSync()!);
     switch (choice) {
@@ -28,6 +30,9 @@ void main() {
         deleteTaskMenu(taskManager);
         break;
       case 5:
+        searchMenu(taskManager);
+        break;
+      case 6:
         flag = false;
         break;
     }
@@ -55,4 +60,16 @@ void completeTaskMenu(TaskManager taskManager) {
   print("Enter index of Task...");
   int index = int.parse(stdin.readLineSync()!);
   taskManager.completeTask(index);
+}
+
+void searchMenu(TaskManager taskManager) {
+  print("Enter Keyword ...");
+  String keyword = stdin.readLineSync()!;
+  List<Task> foundTasks = taskManager.searchTasks(keyword);
+
+  for (var task in foundTasks) {
+    int index = taskManager.taskList.indexOf(task);
+    print("$index. ${task.title}");
+  }
+  waitToPress();
 }
