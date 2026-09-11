@@ -3,21 +3,22 @@ import 'package:task_flow/enums/status.dart';
 import 'package:task_flow/managers/task_manager.dart';
 import 'package:task_flow/models/task.dart';
 
-void main() {
+void main() async {
   bool flag = true;
   TaskManager taskManager = TaskManager();
+  await taskManager.loadTasks();
   do {
     print("===== TaskFlow =====");
-    print("1. Add Task");
+    print("1. Add Task ");
     print("2. Show Tasks");
     print("3. Complete Task");
     print("4. Delete Task");
     print("5. Search Tasks");
-    print("6. Filter Taasks");
+    print("6. Filter Tasks");
     print("7. Sort Tasks");
     print("8. Exit");
     stdout.write("Choose an option: ");
-    int choice = int.parse(stdin.readLineSync()!);
+    int choice = checkInput();
     if (checkChoice(1, 8, choice)) {
       switch (choice) {
         case 1:
@@ -42,17 +43,28 @@ void main() {
         case 7:
           sortMenu(taskManager);
           break;
-        case 8:  
+        case 8:
           flag = false;
           break;
       }
     }
   } while (flag);
+  await taskManager.saveTasks();
 }
 
 void waitToPress() {
   print("Press Enter to continue");
   stdin.readLineSync();
+}
+
+int checkInput() {
+  while (true) {
+    int? input = int.tryParse(stdin.readLineSync()!);
+    if (input != null) {
+      return input;
+    }
+    print("The input wronge try agian!");
+  }
 }
 
 bool checkChoice(int min, int max, int choice) {
@@ -70,15 +82,15 @@ void addTaskMenu(TaskManager taskManager) {
 }
 
 void deleteTaskMenu(TaskManager taskManager) {
-  print("Enter index of Task...");
-  int index = int.parse(stdin.readLineSync()!);
-  taskManager.deleteTask(index);
+  print("Enter ID of Task...");
+  int id = checkInput();
+  taskManager.deleteTask(id);
 }
 
 void completeTaskMenu(TaskManager taskManager) {
-  print("Enter index of Task...");
-  int index = int.parse(stdin.readLineSync()!);
-  taskManager.completeTask(index);
+  print("Enter ID of Task...");
+  int id = checkInput();
+  taskManager.completeTask(id);
 }
 
 void searchMenu(TaskManager taskManager) {
@@ -87,8 +99,7 @@ void searchMenu(TaskManager taskManager) {
   List<Task> foundTasks = taskManager.searchTasks(keyword);
 
   for (var task in foundTasks) {
-    int index = taskManager.taskList.indexOf(task);
-    print("$index. ${task.title}");
+    print("[${task.id}]. ${task.title}");
   }
   waitToPress();
 }
@@ -97,22 +108,20 @@ void filterMenu(TaskManager taskManager) {
   List<Task> foundTasks;
   print("1. pending");
   print("2. completed");
-  int choice = int.parse(stdin.readLineSync()!);
+  int choice = checkInput();
   if (checkChoice(1, 2, choice)) {
     switch (choice) {
       case 1:
         foundTasks = taskManager.filterTasks(Status.pending);
         for (var task in foundTasks) {
-          int index = taskManager.taskList.indexOf(task);
-          print("$index. ${task.title}");
+          print("[${task.id}]. ${task.title}");
         }
         waitToPress();
         break;
       case 2:
         foundTasks = taskManager.filterTasks(Status.completed);
         for (var task in foundTasks) {
-          int index = taskManager.taskList.indexOf(task);
-          print("$index. ${task.title} ");
+          print("[${task.id}]. ${task.title}");
         }
         waitToPress();
         break;
@@ -123,7 +132,7 @@ void filterMenu(TaskManager taskManager) {
 void sortMenu(TaskManager taskManager) {
   print("1. A -> Z");
   print("2. Z -> A");
-  int choice = int.parse(stdin.readLineSync()!);
+  int choice = checkInput();
   if (checkChoice(1, 2, choice)) {
     switch (choice) {
       case 1:
